@@ -1,0 +1,14 @@
+[test_group2]
+192.168.193.139 ansible_ssh_user=root ansible_ssh_pass="changan"
+192.168.193.140 ansible_ssh_user=root 
+
+
+[test_group1]
+192.168.193.139 ansible_ssh_user=root ansible_ssh_pass="changan"
+192.168.193.140 ansible_ssh_user=root
+192.168.193.143 ansible_ssh_user=root
+
+
+[test_group0:children]
+test_group2
+test_group1
