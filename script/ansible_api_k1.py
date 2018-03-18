@@ -38,7 +38,7 @@ inventory
 # Options 类
 Options = namedtuple('Options', ['connection', 'module_path', 'forks', 'become', 'become_method', 'become_user', 'check', 'diff'])
 
-options = Options(connection='local', module_path=None, forks=10, become=None, become_method=None, become_user=None, check=False, diff=False)
+options = Options(connection='smart', module_path=None, forks=10, become=None, become_method=None, become_user=None, check=False, diff=False)
 
 # Play 执行对象和模块
 play_soure =dict(

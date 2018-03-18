@@ -1,0 +1,11 @@
+---
+- hosts:
+    - 192.168.193.139
+    - 192.168.193.140
+  remote_user: root
+  vars:
+    touch_file: some_test.text
+
+  tasks :
+    - name : touch file
+      shell : "/usr/bin/touch /tmp/{{touch_file}}"
