@@ -24,3 +24,11 @@ loader 怎样的方式读取配置文件
 sources 列表形式读取信息， 相对路径，绝对路径    l
 """
 
+
+
+# VariableManager 类
+VariableManager(loader=loader, inventory=inventory)
+"""
+loader 传入loader对象,读取yaml资源配置文件
+inventory 
+"""
