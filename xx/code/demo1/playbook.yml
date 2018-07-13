@@ -1,0 +1,60 @@
+---
+-
+  hosts: db_and_web_server
+  vars:
+    db_name: employee_db
+    db_password: 123456
+    db_user: zrd
+
+  name: 部署web服务
+  tasks:
+    -
+      name: "try python"
+      with_items:
+        - python
+        - python-devel
+      yum: "name={{item}} state=installed"
+    -
+      name: "install 数据库"
+      with_items:
+        - mariadb
+        - MySQL-python
+        - mariadb-server
+        - mariadb-devel
+      yum: "name={{item}} state=installed"
+    -
+      name: "启动 mariadb db"
+      service:
+        enabled: true
+        name: mariadb
+        state: started
+    -
+      mysql_db: "name={{db_name}}    state=present"
+      name: 创建数据库
+    -
+      mysql_user:
+        host: "%"
+        name:
+          ?
+            db_user: ~
+          : ~
+        password:
+          ?
+            db_password: ~
+          : ~
+        priv: "*.*:ALL"
+        state: present
+      name: 创建数据库用户
+    -
+      name: "install flask "
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - flask
+        - flask-mysql
+    -
+      copy: "src=app.py    dest=/opt/app.py"
+      name: 拷贝源码到目标服务器
+    -
+      name: 启动web服务
+      shell: "FLASK_APP=app.py nohup flask run --host=0.0.0.0   &"

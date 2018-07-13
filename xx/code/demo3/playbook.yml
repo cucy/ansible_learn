@@ -1,0 +1,15 @@
+---
+-
+  hosts: db_and_web_server
+
+  name: 部署web服务
+  tasks:
+    -
+      name: "install python"
+      with_items:
+        - python
+        - python-devel
+      yum: "name={{item}} state=installed"
+
+    - include: tasks/deploy_db.yml
+    - include: tasks/deploy_web.yml

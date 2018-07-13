@@ -1,0 +1,11 @@
+---
+-
+  hosts: db_and_web_server
+  name: 部署web服务
+
+  roles:
+    - python
+    - mysql_db
+    - flask_web
+
+  

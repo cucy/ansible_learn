@@ -1,0 +1,7 @@
+---
+-
+  name: "install python"
+  with_items:
+    - python
+    - python-devel
+  yum: "name={{item}} state=installed"

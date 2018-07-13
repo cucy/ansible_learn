@@ -1,0 +1,27 @@
+---
+-
+  hosts: db_and_web_server
+#  vars:
+  serial: 1
+
+  name: 部署web服务
+  tasks:
+    -
+      name: "install python"
+      with_items:
+        - python
+        - python-devel
+      yum: "name={{item}} state=installed"
+#      3600 运行多长时间, poll是多久去获取一次信息 , 0下一次运行时再检查
+      async: 360
+      poll: 10
+      register: install_python_result
+
+    - include: tasks/deploy_db.yml
+    - include: tasks/deploy_web.yml
+
+    - name: 检查任务状态码
+      async_status: jid={{   install_python_result.ansible_job_id }}
+      register: job_result
+      util: job_result.finished
+      retries: 30

@@ -1,0 +1,4 @@
+# sample inventor file
+[db_and_web_server]
+target1 ansible_host=192.168.1.212 ansible_ssh_pass=changan   ansible_user=root
+target2 ansible_host=192.168.1.173 ansible_ssh_pass=changan   ansible_user=root

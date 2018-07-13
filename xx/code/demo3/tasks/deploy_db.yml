@@ -1,0 +1,27 @@
+--- 
+- 
+  name: "install 数据库"
+  with_items: 
+    - mariadb
+    - MySQL-python
+    - mariadb-server
+    - mariadb-devel
+  yum: "name={{item}} state=installed"
+- 
+  name: "启动 mariadb db"
+  service: 
+    enabled: true
+    name: mariadb
+    state: started
+- 
+  mysql_db: "name={{db_name}}    state=present"
+  name: 创建数据库
+- 
+  mysql_user: 
+    host: "%"
+    name: '{{ db_user }}'
+    password: '{{ db_password }}'
+
+    priv: "*.*:ALL"
+    state: present
+  name: 创建数据库用户
