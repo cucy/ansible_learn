@@ -1,0 +1,49 @@
+---
+- name: Create mysql directory
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - "/opt/modules"
+    - "/opt/modules/mysql"
+  tags:
+    - install_mysql
+
+- name: Copy mysql config files
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mysqlConfDir }}/{{ item }}"
+    force: yes
+  with_items:
+    - "character-set.cnf"
+    - "my.cnf"
+    - "sql-mode.cnf"
+  tags:
+    - install_mysql
+
+- name: '下载mysql {{ mysqlVersion }}'
+  get_url:
+    url: http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0/mysql-{{ mysqlVersion }}-linux-glibc2.17-x86_64-minimal.tar.xz
+    dest: /opt/
+    force: no  # 不是每次都需要下载
+    validate_certs: no
+
+#- name: Install mysql container
+#  docker_container:
+#    name: "{{ mysqlContainerName }}"
+#    image: mysql:{{ mysqlVersion }}
+#    restart_policy: unless-stopped
+#    state: started
+#    detach: yes
+#    ports:
+#      - "{{ mysqlPort }}:3306"
+#    volumes:
+#      - "{{ mysqlDataDir }}:/var/lib/mysql"
+#      - "{{ mysqlConfDir }}:/etc/mysql/conf.d"
+#    env:
+#      MYSQL_ROOT_PASSWORD: "{{ mysqlRootPassword }}"
+#  tags:
+#    - install_mysql

@@ -1,0 +1,10 @@
+
+
+[mysql_host]
+
+h80 ansible_port=22 ansible_host=192.168.1.80
+h77 ansible_port=22 ansible_host=192.168.1.77
+h76 ansible_port=22 ansible_host=192.168.1.76
+
+[localtion]
+h80 ansible_port=22 ansible_host=192.168.1.80

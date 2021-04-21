@@ -1,0 +1,5 @@
+---
+- name: ansible_script
+  hosts: allhost
+  roles:
+    - { role: ansible_script, tags: ['ansible_script'] }

@@ -1,0 +1,11 @@
+---
+mysqlVersion: 8.0.23
+mysqlContainerName: mysql
+mysqlPort: 3306
+mysqlCharacterSetServer: utf8mb4
+msyqlCollationServer: utf8mb4_unicode_ci
+mysqlDataDir: /home/mysql8.0
+mysqlConfDir: /etc/mysql/conf.d
+mysqlConfMysqld:
+  max_connections: 500
+  skip_name_resolve: "true"

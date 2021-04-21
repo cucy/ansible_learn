@@ -1,0 +1,29 @@
+---
+mysqlVersion: 8.0.24
+mysqlContainerName: mysql
+mysqlPort: 3306
+mysqlCharacterSetServer: utf8mb4
+msyqlCollationServer: utf8mb4_unicode_ci
+mysqlDataDir: /home/mysql8.0
+mysqlConfDir: /etc/mysql/conf.d
+mysqlConfMysqld:
+  max_connections: 500
+  skip_name_resolve: "true"
+
+#mysqldownURL: http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0/mysql-{{ mysqlVersion }}-linux-glibc2.17-x86_64-minimal.tar.xz
+mysqldownURL: http://192.168.1.27/mysql-8.0.24-linux-glibc2.17-x86_64-minimal.tar.xz
+mysqlDownDest: /opt/modules  # 下载目录
+mysqlTarDest: /opt/modules # 解压目录
+mysqlTarFileName: mysql-{{ mysqlVersion }}-linux-glibc2.17-x86_64-minimal.tar.xz
+mysqlFileDir: mysql-{{ mysqlVersion }}-linux-glibc2.17-x86_64-minimal
+mysqlbinpath: /opt/modules/mysql/bin
+mysqlTarDirDest: '{{ mysqlTarDest }}/{{mysqlFileDir}}'
+mysqlLinkPATH: /opt/modules/mysql
+
+
+mysqldatadir: /home/mysql8.0
+mysql_conf_abs_path: /etc/my.cnf
+
+
+
+

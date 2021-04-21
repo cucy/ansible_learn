@@ -1,0 +1,5 @@
+- name: Check if mysql is installed
+  stat: path={{mysqlTarDirDest}}
+  register: install
+- name: Show debug info
+  debug: var=install verbosity=4

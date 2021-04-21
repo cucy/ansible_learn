@@ -1,0 +1,153 @@
+# 基础组件
+# ansible-playbook env_setup.yml -i environments/prod  -e "@environments/000_cross_env_vars.yml"
+---
+- name: env_setup
+  hosts: all
+  gather_facts: yes
+#  serial: "{{ deployBatch | default('1')}}"
+  tasks:
+    - debug:
+        msg: "{{ group_names }}"
+
+    - name: Disable Selinux
+      shell: setenforce 0
+      tags:
+        - disable_selinux
+      ignore_errors: yes
+
+    - name: Disable Selinux Permanently
+      copy:
+        content: |
+          # Ansible Managed
+          SELinux=disabled
+          SELINUXTYPE=targeted
+        dest: /etc/selinux/config
+      tags:
+        - disable_selinux
+
+    - name: Restart systemd-hostnamed
+      systemd:
+        name: systemd-hostnamed
+        state: restarted
+      tags:
+        - change_hostname
+
+    - name: Stop firewalld
+      systemd:
+        name: firewalld
+        state: stopped
+      tags:
+        - disable_firewalld
+
+    - name: Disable firewalld
+      systemd:
+        name: firewalld
+        enabled: no
+      tags:
+        - disable_firewalld
+
+    - name: Stop NetworkManager
+      systemd:
+        name: NetworkManager
+        state: stopped
+      tags:
+        - disable_NetworkManager
+
+    - name: Disable NetworkManager
+      systemd:
+        name: NetworkManager
+        enabled: no
+      tags:
+        - disable_NetworkManager
+
+
+    - name: Add sysops user
+      user:
+        name: sysops
+      tags:
+        - provisioning
+        - add_user
+
+    - name: Add sysops to sudoer
+      copy:
+        content: "sysops       ALL=(ALL)       NOPASSWD: ALL\n"
+        dest: /etc/sudoers.d/10-huitong-init
+      tags:
+        - provisioning
+        - add_user
+
+    - name: Set authorized key
+      authorized_key:
+        user: sysops
+        state: present
+        key: "{{ item  }}"
+      with_file:
+        - "{{ sysopsPublicKeyFilePath }}"
+        - "{{ deployPublicKeyFilePath }}"
+      tags:
+        - provisioning
+        - add_authorized_key
+
+    - name: Change hostname
+      hostname:
+          name: "{{inventory_hostname}}"
+      tags:
+        - provisioning
+        - change_hostname
+
+    - name: Add hostname to /etc/hosts
+      lineinfile:
+          dest: /etc/hosts
+          regexp: '^127\.0\.0\.1[ \t ]+localhost'
+          line: "127.0.0.1 localhost {{inventory_hostname}}"
+          state: present
+      tags:
+        - provisioning
+        - change_hostname
+
+    - name: Fix /etc/hosts removing the old hostname
+      lineinfile:
+          dest: /etc/hosts
+          regexp: "^{{ ansible_default_ipv4.address }}"
+          line: "{{ ansible_default_ipv4.address }} {{ inventory_hostname }} {{ ansible_hostname }}"
+          state: present
+      tags:
+        - provisioning
+        - change_hostname
+
+    - name: 创建公共目录
+      file:
+        path: '{{ item }}'
+        state: directory
+        owner: sysops
+        group: sysops
+        mode: '0755'
+      with_items:
+        - "/data/projects"
+        - "/data/var/log"
+        - "/data/var/lib"
+      tags:
+        - create_deploy_dir
+
+    - name: Add epel-release
+      yum:
+        name:
+          - epel-release
+          - yum-utils
+      tags:
+        - install_epel
+
+    - name: Install tools
+      yum:
+        name:
+          - git
+          - htop
+          - tmux
+          - wget
+          - unzip
+          - vim
+#          - python-setuptools
+        state: present
+      tags:
+        - install_tools
+

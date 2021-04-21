@@ -1,0 +1,5 @@
+---
+mysqlHost: 192.168.1.80
+mysqlPort: 3306
+mysqlUsername: root
+mysqlPassword:

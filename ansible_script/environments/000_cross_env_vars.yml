@@ -1,0 +1,9 @@
+---
+# 部署公钥目录
+sysopsPublicKeyFilePath: public_keys/sysops-key.pub
+deployPublicKeyFilePath: public_keys/deploy-key.pub
+deployDockerRegistryUsername:
+deployDockerRegistryPassword:
+
+
+

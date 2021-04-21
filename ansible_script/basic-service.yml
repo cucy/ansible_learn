@@ -1,0 +1,13 @@
+---
+- name: play for all host
+  hosts: mysql_host
+  roles:
+    - { role: mysql, tags: ['mysql'] }
+
+
+#    - { role: redis, tags: ['redis'] }
+#    - { role: rabbitmq, tags: ['rabbitmq'] }
+#    - { role: nacos, tags: ['nacos'] }
+#    - { role: rc-local, tags: ['rc-local', 'redis'] }
+#    - { role: docker, tags: ['docker'] }
+#    - { role: nginx, tags: ['nginx'] }

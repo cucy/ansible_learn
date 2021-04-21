@@ -1,0 +1,144 @@
+- name: Create mysql directory
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - "/opt/modules"
+#    - "/etc/mysql/conf.d"
+  tags:
+    - install_mysql
+
+- name: Add mysql user
+  user:
+    name: mysql
+  tags:
+    - install_mysql
+
+
+- name: Create data directory
+  file:
+    path: "{{ mysqldatadir }}"
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: '0755'
+  tags:
+    - install_mysql
+
+- name: Copy mysql config files
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mysqlConfDir }}/{{ item }}"
+    force: yes
+  with_items:
+    - "my.cnf"
+  tags:
+    - install_mysql
+
+- name: '下载mysql {{ mysqlVersion }}  到 {{ mysqlDownDest }}'
+  get_url:
+    url: "{{ mysqldownURL }}"
+    dest: "{{ mysqlDownDest }}"
+    force: no  # 不是每次都需要下载
+    validate_certs: no
+  tags:
+    - install_mysql
+
+
+
+- name: Check if mysql is installed
+  stat: path={{mysqlTarDirDest}}
+  register: install
+  tags:
+    - install_mysql
+- name: "解压 {{ mysqlTarDirDest }}"
+  unarchive:
+    src: "{{ mysqlDownDest }}/{{ mysqlTarFileName }}"
+    dest: "{{ mysqlTarDest }}"
+    copy: no   # 不是从管理机器获取
+  when: install.stat.isdir is not defined or not install.stat.isdir
+  tags:
+    - install_mysql
+
+- name: "创建软链接  {{ mysqlTarDirDest }}  -> {{ mysqlLinkPATH }} "
+  file:
+    src: "{{ mysqlTarDirDest }}"
+    path: "{{ mysqlLinkPATH }}"
+    owner: root
+    group: root
+    state: link
+  tags:
+    - install_mysql
+
+- name: 配置文件
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: mysql
+    group: mysql
+    mode: 0644
+  with_items:
+    - { src: 'my.cnf.j2', dest: '/etc/my.cnf' }
+  tags:
+    - install_mysql
+
+- name: /etc/profile.d/mysql_profile.sh PATH配置文件
+  template:
+    src: "mysql_profile.sh.j2"
+    dest: "/etc/profile.d/mysql_profile.sh"
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - install_mysql
+
+- name: mysqld  systemd 配置文件
+  template:
+    src: "mysqld.service.j2"
+    dest: '/usr/lib/systemd/system/mysqld.service'
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - install_mysql
+
+
+
+- name: Clean system's buffer and cache
+  shell: "sysctl -w vm.drop_caches=1"
+  tags:
+    - install_mysql
+
+- name: Check if mysql datadir exist
+  stat: path={{mysqldatadir}}/mysql
+  register: have_datadir
+  tags:
+    - install_mysql
+
+- name: 初始化数据表
+  shell: mysqld --defaults-file={{ mysql_conf_abs_path }} --initialize --user=mysql
+  when: have_datadir.stat.isdir is not defined or not have_datadir.stat.isdir
+  tags:
+    - install_mysql
+
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+  tags:
+    - install_mysql
+- name: Start mysql server
+  systemd:
+    name: mysqld
+    state: started
+  tags:
+    - install_mysql
+
+- name: '删除tar文件 {{mysqlDownDest}}/{{mysqlTarFileName}} '
+  file:
+    path: "{{mysqlDownDest}}/{{mysqlTarFileName}}"
+    state: absent
+  tags:
+    - install_mysql
