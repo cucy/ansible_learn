@@ -146,6 +146,7 @@
           - wget
           - unzip
           - vim
+          - sysstat
 #          - python-setuptools
         state: present
       tags:
