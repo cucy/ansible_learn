@@ -1,0 +1,5 @@
+[test_group1]
+h80 ansible_ssh_user=root ansible_ssh_pass=1111
+h76 ansible_ssh_user=root ansible_ssh_pass=222
+h77 ansible_ssh_user=root ansible_ssh_pass=333
+
