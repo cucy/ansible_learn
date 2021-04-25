@@ -1,0 +1,12 @@
+- hosts: all
+  tasks:
+  - name: ping all hosts
+    ping:
+  - name: system uptime
+    shell: uptime
+    register: remsg
+  - name: debug msg
+    debug: "{{ remsg.stdout_lines }}"
+#  dict(action=dict(module="shell', args='ls'), register='shell_out'),
+#  dict(action=dict(module='debug', args=dict(msg='{{shell_out.stdout}}'))),
+#  dict(action=dict(module='command', args=dict(cmd='/usr/bin/uptime'))),
