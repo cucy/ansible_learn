@@ -4,7 +4,7 @@ mysqlContainerName: mysql
 mysqlPort: 3306
 mysqlCharacterSetServer: utf8mb4
 msyqlCollationServer: utf8mb4_unicode_ci
-mysqlDataDir: /home/mysql8.0
+mysqlDataDir: /home/mysql8.0datadir
 mysqlConfDir: /etc/mysql/conf.d
 mysqlConfMysqld:
   max_connections: 500

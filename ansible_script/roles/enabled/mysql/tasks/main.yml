@@ -14,6 +14,7 @@
 - name: Add mysql user
   user:
     name: mysql
+    state: present
   tags:
     - install_mysql
 
@@ -125,11 +126,13 @@
     - install_mysql
 
 - name: Force systemd to reread configs
+  when: have_datadir.stat.isdir is not defined or not have_datadir.stat.isdir
   systemd:
     daemon_reload: yes
   tags:
     - install_mysql
 - name: Start mysql server
+  when: have_datadir.stat.isdir is not defined or not have_datadir.stat.isdir
   systemd:
     name: mysqld
     state: started

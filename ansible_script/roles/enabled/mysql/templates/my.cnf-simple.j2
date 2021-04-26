@@ -1,0 +1,17 @@
+# 最简洁配置
+[mysql]
+socket={{ mysqldatadir }}/mysql.sock
+
+[mysqld]
+user=mysql
+datadir={{ mysqldatadir }}
+socket={{ mysqldatadir }}/mysql.sock
+log-error={{ mysqldatadir }}/mysqld.log
+pid-file={{ mysqldatadir }}/mysqld.pid
+mysqlx_socket={{ mysqldatadir }}/mysqlx.sock
+character-set-server = utf8mb4
+collation-server=utf8mb4_general_ci
+
+
+
+
